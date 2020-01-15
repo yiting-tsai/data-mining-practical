@@ -1,0 +1,144 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage{fullpage}
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[frenchb]{babel}
+\usepackage{amsmath}
+\usepackage{bbm}
+\usepackage{theorem}
+\usepackage{array}
+\usepackage{alltt}
+\usepackage{graphicx}
+\usepackage{tabularx}
+\usepackage{lastpage}
+%\usepackage{enumitem}
+\usepackage{pdfpages}
+\usepackage{color}
+\usepackage{url}
+
+
+\theoremstyle{break}
+\theorembodyfont{\upshape}
+\newtheorem{question}{Question}[section]
+\newcommand{\beq}{\begin{question}}
+\newcommand{\eeq}{\end{question}}
+
+
+%% \documentclass[11pt,a4paper]{article}
+%% \usepackage[T1]{fontenc}
+%% %\usepackage[utf8]{inputenc}
+%% %\usepackage[english]{babel}
+%% \usepackage{graphicx}
+%% \usepackage{fullpage}
+%% %\usepackage{pstricks}
+%% %\usepackage{pst-node}
+
+%% \usepackage{enumitem}
+%% \usepackage{amsmath}
+%% \usepackage{amssymb}
+%% %\usepackage{cite}
+%% %\usepackage[text={15cm,24cm}]{geometry}
+
+
+%% \usepackage[french]{babel}
+%% \usepackage{array}
+
+%% \usepackage{color}
+%% %\usepackage{bbm}
+%% %\usepackage{beamerthemesplit}
+%% %\usepackage{xmpmulti}
+%% \usepackage{amsmath}
+%% \usepackage{fullpage}
+%% \usepackage[latin1]{inputenc}
+%% \usepackage[T1]{fontenc}
+%% \usepackage[frenchb]{babel}
+%% \usepackage{amsmath}
+%% \usepackage{bbm}
+%% \usepackage{theorem}
+%% \usepackage{array}
+%% \usepackage{alltt}
+%% \usepackage{graphicx}
+%% \usepackage{tabularx}
+%% \usepackage{lastpage}
+
+%% \theoremstyle{break}
+%% \theorembodyfont{\upshape}
+%% \newtheorem{question}{Question}[section]
+
+
+
+%% \newcommand{\beq}{\begin{question}}
+%% \newcommand{\eeq}{\end{question}}
+
+
+
+\bibliographystyle{prsty}	  %% le style utilisé pour créer la bibliographie
+\begin{document}                  %% signale le début du document
+\title{Itemsets and Association Rules Mining\\Practical work}
+\author{Yannick Toussaint}
+\maketitle
+To carry this project, you will be in tandem. The dataset is large enough for the groups to propose different analysis of the same dataset\ldots So do not copy from one group to an other !
+
+\vspace{0.5cm}
+Your mission : {\it You just have been recruted as a journalist and you are in charge of analysing a survey that has just been published (2016 !). Depending the readers of your journal, you have to decide what you will focus on\ldots}. If you are unscrupulous about the results you can publish, you still have scientific values and want to use a rigorous data mining process.
+\vspace{0.5cm}
+
+The project aims at analysing and understanding the content of a dataset using Pattern Mining and Association Rules techniques. The following dataset is a survey on people living in France, more specifically in Grand-Est. The project is very open... You are relatively free to choose what you want to focus on. You may have very general observation or very specific ones. You also have to adapt the work to the characteristics of your computer, you may adapt tresholds and/or dataset size to be able to get results. Please, be precise to explicit which constraints you applied.
+
+Thus, you will extract itemsets and association rules from a real dataset. The goal of the project is to be able to observe certain frequent cooccurrences among attributes. You are free to decide which attributes you will study but you will have to justify and explain how you built your observations.
+
+\section{The dataset}
+The data set comes from Insee which is the national institute for statistics and economic studies. Each line describe a person/familly. The national collection of the dataset contains 3,3 million of individuals (see \url{https://www.insee.fr/fr/statistiques/4171523?sommaire=4171558#consulter}). The Grand-Est Region dataset contains 1,474,560 records. Each individual is described by 57 multivaluated attributes which are either a symbolic or numerical values. Some attributes have more that 120 different values. Thus, the dataset should be simplified. The pdf file gives the meaning of the attributes.
+
+I could suggest to reduce the list of attributes to the following, but feel free to make your own list if you prefer (justify):
+REGION, AGER20, ANARR, ANEMR, ASCEN, BAIN, BATI, CATL, CHOS, CLIM, CMBL, COUPLE, CS1, CUIS, DEROU, DIPL\_15, EAU, EGOUL, ELEC, EMPL, ETUD, GARL, ILTUU, IMMI, INAT, INFAM, INPER, MOCO, MODV, NA38, NATC, NATNC, NBPI, NPERR, RECH, SANI, SEXE, SFM, STOCD, TACT, VOIT, WC.
+
+\section{Experiments}
+\begin{question}
+  Write a program in python to prepare the data for SPMF. Your program should start with a list of attributes to keep and build a dataset where :
+ \begin{itemize}
+\item One line = one individual,
+\item Each multivaluated attribute is transformed into  single-valued attributes which are then associated to a number,
+\item All the attributes on a line are sorted from the lower to the higher value.
+ \end{itemize}
+ Of course, test your program on 10 lines from the dataset to make it faster\ldots
+\end{question}
+
+\begin{question}
+  Write the program that decode the results from SPMF
+\end{question}
+
+Then, run SPMF to extract itemsets using the FPG algorithm. As the algorithm requires a lot of CPU and memory space, you may perform several tests, starting with a high support treshold to extract a {\it small} number of itemsets, and decreasing the treshold value to get a some more itemsets. SPMF is a java program. you may increased the default size of the java virtual machine calling SPMF with the following command : {\it java -Xms256m -Xmx2g ./SPMF} where Xms is the intial size of the virtual machine and Xmx is the maximum VM size.
+
+The files that are produced in the following steps may be very big (up to millions of lines). It could be a good idea to use command lines to extract from these files the itemsets or association rules you want to observe.
+
+
+\begin{question}
+  Choose 10 (rather different) itemsets of your choice. Justify the way you choose them. Comment each of them relatively to the domain. In order to comment and interprete an itemset, you may need to look/search other itemsets. Explain how you build you interpretation. 
+\end{question}
+
+
+
+
+\begin{question}
+  Extract Asssociation Rules. As for itemsets, start with a high support and a high confidence and descrease the values up to the limit of your machine. Select about 10 attributes you want to focus on and look at the association rules involving these attributes. Explain how you select some rules, how you interprete these rules and formulate observation concerning the result of the survey.
+\end{question}
+
+
+
+\section{Output of your work}
+Each tandem should send me a zip file with the following :
+\begin{itemize}
+\item A small report that answers the questions, justifies your choices, explains how you works, the difficulties you met and how you solved them. Insert a lot of examples in the report (itemsets, association rules...) to explain your analysis.
+
+\item The programs you developped with comments inside the program file. You should also write a readme to explain how to lunch the programs. I should be able to run your programs from the directory when it will be saved (on my machine). So please, manage the paths so that they do not depend on the machine ! Some of the program are use for preprocessing the data, some are for post-processing (filtering\ldots)... Make it clear! 
+\item The resulting files from SPMF
+\item A file gathering the different commands you used to analyse the results and what the commands can be used for.
+  \item Any information you find useful to communicate
+\end{itemize}
+  
+
+
+
+
+\end{document}
