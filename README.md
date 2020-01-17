@@ -1,5 +1,5 @@
-# IDMC Data Mining Practical Project - Itemset and Association Rules Mining on GrandEst data
-## M2 NLP Yi-Ting TSAI & Sophea LY
+# UE901 Data Mining Practical Project - Itemset and Association Rules Mining on GrandEst data
+**IDMC M2 NLP Yi-Ting TSAI & Sophea LY**
 This is a repository containing all the necessary files for the project of the class UE901 Data Mining with Professor Mr. Yannick Toussaint, beneath you can find basic description of this repository, as well as the instructions and snippets for running the encoder and decoder scripts. 
 
 ### About this repository
@@ -28,3 +28,11 @@ SPMF_commandline.sh
 ```
 it'll output the results along with the corresponding *min_sup* value. 
 For example, an output of the *min_sup=0.6* would be ```output_60.txt```. 
+
+### Decoding the SPMF format
+The snippet below will give the decoded file back, so in terminal:
+```bash
+python DecodeAfterSPMF.py output_60.txt
+```
+### Association rules mining
+
