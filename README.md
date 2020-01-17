@@ -1,5 +1,6 @@
-# UE901 Data Mining Practical Project - Itemset and Association Rules Mining on GrandEst data
+## UE901 Data Mining Practical Project - Itemset and Association Rules Mining on GrandEst data
 **IDMC M2 NLP Yi-Ting TSAI & Sophea LY**
+
 This is a repository containing all the necessary files for the project of the class UE901 Data Mining with Professor Mr. Yannick Toussaint, beneath you can find basic description of this repository, as well as the instructions and snippets for running the encoder and decoder scripts. 
 
 ### About this repository
