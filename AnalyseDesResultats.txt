@@ -1,0 +1,356 @@
+Using Linux or cygwin(windows) commands...
+
+$ cat agaricus-lepiota.data.txt |sort -u|wc -l
+File Agaricus-lepiota.data : 8124 Objects, all different
+1% -> 81,24
+
+----
+
+$ head Apriori.spmf.tx
+$ tail Apriori.spmf.tx
+File Apriori.spmf.txt : All patterns > 5%
+Number of patterns : 53583
+
+----
+FPClose: 1197 patterns, sorting by frequency...
+Substitute "#SUP " with a \t
+$ cat FPCLose.decoded.txt |sed "s/#SUP: /       /g"
+$ cat FPCLose.decoded.tab.txt |sort -t" " -rnk2|more
+
+----
+Top 10 most frequent close items
+$ cat FPCLose.decoded.tab.txt |sort -t" " -rnk2|head -10
+16-p 	8124
+16-p 17-w 	7924
+16-p 6-f 	7914
+16-p 17-w 6-f 	7906
+16-p 18-o 	7488
+16-p 6-f 18-o 	7296
+16-p 17-w 6-f 18-o 	7288
+16-p 7-c 	6812
+16-p 17-w 7-c 	6620
+16-p 17-w 6-f 7-c 	6602
+
+What about missing items (negation ?) ?
+
+----
+Comparing Close and non-close itemsets... using the support.
+$ cat Apriori.decoded.txt |grep 7296
+6-f 18-o #SUP: 7296
+6-f 16-p 18-o #SUP: 7296 **
+
+$ cat Apriori.decoded.txt |grep 3856
+6-f 18-o 21-v #SUP: 3856
+17-w 18-o 21-v #SUP: 3856
+6-f 16-p 18-o 21-v #SUP: 3856
+6-f 17-w 18-o 21-v #SUP: 3856
+16-p 17-w 18-o 21-v #SUP: 3856
+6-f 16-p 17-w 18-o 21-v #SUP: 3856 **
+
+Why does the number of non-close patterns varies depending on the pattern ?
+a matter of attribute combination...
+
+----
+Patterns with the attribute "edible"(0-e)
+$ cat FPCLose.decoded.tab.txt |sort -t" " -rnk2|grep "0-e"|wc -l
+299
+
+---- Attribute description
+16. veil-type:                partial=p,universal=u
+17. veil-color:               brown=n,orange=o,white=w,yellow=y
+6. gill-attachment:          attached=a,descending=d,free=f,notched=n
+-
+10 most frequent patterns for edible mushrooms:
+$ cat FPCLose.decoded.tab.txt |sort -t" " -rnk2|grep "0-e"|head -10
+16-p 0-e 	4208
+16-p 17-w 6-f 0-e 	4016
+16-p 8-b 0-e 	3920
+16-p 17-w 6-f 8-b 0-e 	3728
+16-p 18-o 0-e 	3680
+16-p 12-s 0-e 	3640
+16-p 10-e 	3516
+16-p 17-w 6-f 18-o 0-e 	3488
+16-p 17-w 6-f 12-s 0-e 	3448
+16-p 0-e 5-n 	3408
+
+----
+10 most frequent patterns for poisonous mushrooms:
+$ cat FPCLose.decoded.tab.txt |sort -t" " -rnk2|grep "0-p"|head -10
+16-p 0-p 	3916 
+16-p 17-w 0-p 	3908
+16-p 6-f 0-p 	3898
+16-p 17-w 6-f 0-p 	3890
+16-p 6-f 18-o 0-p 	3808
+16-p 17-w 7-c 0-p 	3804
+16-p 17-w 6-f 18-o 0-p 	3800
+16-p 17-w 6-f 7-c 0-p 	3786
+16-p 17-w 6-f 18-o 7-c 0-p 	3696
+16-p 4-f 0-p 	3292
+
+----
+Patterns that are common to poisonous and edible mushrooms
+$ cat FPClose.decoded.patternAlone.txt |grep " 0-"|sed "s/ 0-. $//"|sort|uniq -c|sort -rn|more
+-or-
+$ cat FPClose.decoded.patternAlone.txt |grep " 0-"|sed "s/ 0-. $//"|sort|uniq -c|egrep -e"^ *2"
+   2 16-p
+   2 16-p 17-w 6-f
+   2 16-p 17-w 6-f 14-w
+   2 16-p 17-w 6-f 15-w
+   2 16-p 17-w 6-f 18-o
+   2 16-p 17-w 6-f 18-o 14-w
+   2 16-p 17-w 6-f 7-c
+   2 16-p 17-w 6-f 7-c 8-b
+
+You should thus check which attributes are linked with one target (0-e or 0-p) and not the other.
+
+16-p 4-f	3292 is thus a pattern for poisonous mushrooms
+16-p 5-p  is a pattern for edible mushrooms
+
+
+==============================
+==============================
+==============================
+Non-closed rules: A priori.
+cat AprioriAS.decoded.txt|wc -l
+   24033
+
+with 0-p:
+$ cat AprioriAS.decoded.txt|grep "0-p"|wc -l
+    2557
+
+with 0-e:
+$ cat AprioriAS.decoded.txt|grep "0-e"|wc -l
+    8790
+
+$ cat AprioriAS.decoded.txt|grep "==> 0-e #"|wc -l
+     124
+
+$ cat AprioriAS.decoded.txt|grep "==> 0-e #"|head -20
+5-n 10-t ==> 0-e #1.0#2496
+6-f 5-n 10-t ==> 0-e #1.0#2496
+12-s 5-n 10-t ==> 0-e #1.0#2112
+13-s 5-n 10-t ==> 0-e #1.0#2112
+16-p 5-n 10-t ==> 0-e #1.0#2496
+17-w 5-n 10-t ==> 0-e #1.0#2496
+18-o 8-b 5-n ==> 0-e #1.0#2688
+18-o 5-n 10-t ==> 0-e #1.0#2496
+8-b 5-n 10-t ==> 0-e #1.0#2496
+6-f 12-s 5-n 10-t ==> 0-e #1.0#2112
+6-f 13-s 5-n 10-t ==> 0-e #1.0#2112
+6-f 16-p 5-n 10-t ==> 0-e #1.0#2496
+6-f 17-w 5-n 10-t ==> 0-e #1.0#2496
+6-f 18-o 8-b 5-n ==> 0-e #1.0#2496
+6-f 18-o 5-n 10-t ==> 0-e #1.0#2496
+6-f 8-b 5-n 10-t ==> 0-e #1.0#2496
+7-c 12-s 18-o 5-n ==> 0-e #1.0#2064
+12-s 16-p 5-n 10-t ==> 0-e #1.0#2112
+12-s 17-w 5-n 10-t ==> 0-e #1.0#2112
+12-s 18-o 8-b 5-n ==> 0-e #1.0#2304
+
+$ cat AprioriAS.decoded.txt|grep "==> 0-p #"|wc -l 
+     128
+5-f ==> 0-p #1.0#2160
+6-f 5-f ==> 0-p #1.0#2160
+7-c 5-f ==> 0-p #1.0#2160
+7-c 12-k ==> 0-p #1.0#2228
+7-c 13-k ==> 0-p #1.0#2160
+16-p 5-f ==> 0-p #1.0#2160
+17-w 5-f ==> 0-p #1.0#2160
+18-o 5-f ==> 0-p #1.0#2160
+18-o 12-k ==> 0-p #1.0#2192
+18-o 13-k ==> 0-p #1.0#2160
+6-f 7-c 5-f ==> 0-p #1.0#2160
+6-f 7-c 12-k ==> 0-p #1.0#2210
+6-f 7-c 13-k ==> 0-p #1.0#2160
+6-f 16-p 5-f ==> 0-p #1.0#2160
+6-f 17-w 5-f ==> 0-p #1.0#2160
+6-f 18-o 5-f ==> 0-p #1.0#2160
+6-f 18-o 12-k ==> 0-p #1.0#2192
+6-f 18-o 13-k ==> 0-p #1.0#2160
+7-c 16-p 5-f ==> 0-p #1.0#2160
+7-c 16-p 12-k ==> 0-p #1.0#2228
+
+
+----
+Closed Association Rules support >=10%, confidence >= 30%
+nb: 2 014 918
+
+----
+Ordering rules by decreasing confidence and decreasing support: the top 20 rules.
+$ cat ClosedAS.decoded.tabtxt |sort -t "        " -rnk 3 -rnk 2
+
+17-w ==> 16-p	7924	1.0
+6-f ==> 16-p	7914	1.0
+6-f 17-w ==> 16-p	7906	1.0
+18-o ==> 16-p	7488	1.0
+6-f 18-o ==> 16-p	7296	1.0
+6-f 17-w 18-o ==> 16-p	7288	1.0
+17-w 18-o ==> 6-f 16-p	7288	1.0
+16-p 17-w 18-o ==> 6-f	7288	1.0
+7-c ==> 16-p	6812	1.0
+7-c 17-w ==> 16-p	6620	1.0
+6-f 7-c ==> 16-p 17-w	6602	1.0
+6-f 7-c 17-w ==> 16-p	6602	1.0
+6-f 7-c 16-p ==> 17-w	6602	1.0
+7-c 18-o ==> 16-p	6464	1.0
+7-c 17-w 18-o ==> 6-f 16-p	6272	1.0
+7-c 16-p 17-w 18-o ==> 6-f	6272	1.0
+6-f 7-c 18-o ==> 16-p 17-w	6272	1.0
+6-f 7-c 17-w 18-o ==> 16-p	6272	1.0
+6-f 7-c 16-p 18-o ==> 17-w	6272	1.0
+8-b ==> 16-p	5612	1.0
+
+
+----
+Exact rules :
+$ cat ClosedAS.decoded.tabtxt |sort -t "        " -rnk 3 -rnk 2|grep "1.0"|wc -l
+740272
+
+with 0-e :385738
+with 0-p : 250324
+
+with 0-e in right part:
+$ cat ClosedAS.decoded.tabtxt |sort -t "        " -rnk 3 -rnk 2|grep "1.0"|egrep -e "==>.*0-p"| head -20
+7-c 4-f 12-k ==> 0-p 16-p 17-w	2228	1.0
+7-c 17-w 4-f 12-k ==> 0-p 16-p	2228	1.0
+7-c 17-w 12-k ==> 0-p 16-p 4-f	2228	1.0
+7-c 16-p 4-f 12-k ==> 0-p 17-w	2228	1.0
+7-c 16-p 17-w 4-f 12-k ==> 0-p	2228	1.0
+7-c 16-p 17-w 12-k ==> 0-p 4-f	2228	1.0
+7-c 16-p 12-k ==> 0-p 17-w 4-f	2228	1.0
+7-c 12-k ==> 0-p 16-p 17-w 4-f	2228	1.0
+6-f 7-c 4-f 12-k ==> 0-p 16-p 17-w	2210	1.0
+6-f 7-c 17-w 4-f 12-k ==> 0-p 16-p	2210	1.0
+6-f 7-c 17-w 12-k ==> 0-p 16-p 4-f	2210	1.0
+6-f 7-c 16-p 4-f 12-k ==> 0-p 17-w	2210	1.0
+6-f 7-c 16-p 17-w 4-f 12-k ==> 0-p	2210	1.0
+6-f 7-c 16-p 17-w 12-k ==> 0-p 4-f	2210	1.0
+6-f 7-c 16-p 12-k ==> 0-p 17-w 4-f	2210	1.0
+6-f 7-c 12-k ==> 0-p 16-p 17-w 4-f	2210	1.0
+7-c 18-o 4-f 12-k ==> 0-p 6-f 16-p 17-w	2192	1.0
+7-c 18-o 12-k ==> 0-p 6-f 16-p 17-w 4-f	2192	1.0
+7-c 17-w 18-o 4-f 12-k ==> 0-p 6-f 16-p	2192	1.0
+7-c 17-w 18-o 12-k ==> 0-p 6-f 16-p 4-f	2192	1.0
+
+
+---
+Information and Generic Basis : Support 20%, Confidence 30%
+Number of association rules generated : 2867
+
+Exchanging support and confidence position and inserting tab character
+$cat IGBAS.decoded.txt |sed "s/ #CONF: /#/"|sed "s/ #SUP: /#/">titi
+$cat titi |sed "s/#\(.*\)#\(.*\)$/#\2#\1/">IGBAS.decoded.tab.txt
+
+Observe Information Basis:(Excluding "__")
+Taking one closed itemset:
+$cat IGBAS.decoded.tab.txt |grep "#.*#2344"
+19-p ==> 6-f 12-s 13-s 16-p 17-w 0-e 8-b#0.5907258064516129#2344
+0-e ==> 6-f 12-s 13-s 16-p 17-w 19-p 8-b#0.5570342205323194#2344
+8-b ==> 6-f 12-s 13-s 16-p 17-w 19-p 0-e#0.41767640769779046#2344
+12-s ==> 6-f 13-s 16-p 17-w 19-p 0-e 8-b#0.4528593508500773#2344
+13-s ==> 6-f 12-s 16-p 17-w 19-p 0-e 8-b#0.47487844408427876#2344
+
+Why so many rules? 
+
+----
+Looking at the most confident and frequent rules:
+$cat IGBAS.decoded.txt |sort -t "#" -rnk 2|grep -v "__"|head -20
+20-w ==> 16-p 17-w #0.9966499162479062#2380
+20-w ==> 6-f 16-p #0.992462311557789#2370
+12-k ==> 6-f 16-p 17-w 4-f #0.9924114671163575#2354
+20-w ==> 6-f 16-p 17-w #0.9891122278056952#2362
+21-y ==> 6-f 7-c 16-p 17-w 18-o #0.9813084112149533#1680
+20-n ==> 6-f 16-p 17-w 18-o #0.975609756097561#1920
+3-n ==> 16-p 18-o #0.9632224168126094#2200
+21-y ==> 6-f 7-c 16-p 17-w 8-b #0.9579439252336449#1640
+22-g ==> 6-f 16-p 17-w 8-b #0.9404096834264432#2020
+12-k ==> 0-p 7-c 16-p 17-w 4-f #0.93929173693086#2228
+3-g ==> 6-f 16-p 17-w 8-b #0.9391304347826087#1728
+20-w ==> 6-f 16-p 17-w 11-? #0.9380234505862647#2240
+2-f ==> 6-f 16-p 17-w 18-o #0.9379310344827586#2176
+13-k ==> 0-p 6-f 7-c 16-p 17-w 18-o 4-f #0.9375#2160
+12-k ==> 0-p 6-f 7-c 16-p 17-w 4-f #0.9317032040472175#2210
+2-s ==> 6-f 16-p 17-w #0.9248826291079812#2364
+12-k ==> 0-p 6-f 7-c 16-p 17-w 18-o 4-f #0.924114671163575#2192
+11-? ==> 6-f 16-p 17-w #0.9225806451612903#2288
+11-? ==> 16-p 4-f #0.9225806451612903#2288
+3-g ==> 6-f 16-p 17-w 18-o #0.9173913043478261#1688
+
+Rule with poisonous mushrooms:
+$ cat IGBAS.decoded.txt |sort -t "#" -rnk 2|grep -v "__"|egrep -e"0-p"|wc -l
+     183
+$ cat IGBAS.decoded.txt |sort -t "#" -rnk 2|grep -v "__"|egrep -e"0-p"|head -20
+12-k ==> 0-p 7-c 16-p 17-w 4-f #0.93929173693086#2228
+13-k ==> 0-p 6-f 7-c 16-p 17-w 18-o 4-f #0.9375#2160
+12-k ==> 0-p 6-f 7-c 16-p 17-w 4-f #0.9317032040472175#2210
+12-k ==> 0-p 6-f 7-c 16-p 17-w 18-o 4-f #0.924114671163575#2192
+8-n ==> 0-p 6-f 16-p 18-o #0.8853503184713376#2224
+8-n ==> 0-p 6-f 16-p 17-w 18-o #0.8821656050955414#2216
+5-f ==> 0-p 6-f 7-c 16-p 17-w 18-o 4-f #0.8666666666666667#1872
+8-n ==> 0-p 6-f 7-c 16-p 17-w 18-o #0.8407643312101911#2112
+8-n ==> 0-p 6-f 16-p 17-w 18-o 21-v #0.7898089171974523#1984
+8-n ==> 0-p 6-f 16-p 18-o 4-f #0.7802547770700637#1960
+8-n ==> 0-p 6-f 16-p 17-w 18-o 4-f #0.7770700636942676#1952
+8-n ==> 0-p 6-f 7-c 16-p 17-w 18-o 21-v #0.7707006369426752#1936
+20-w ==> 0-p 16-p #0.7587939698492462#1812
+20-w ==> 0-p 16-p 4-f #0.7554438860971524#1804
+20-w ==> 0-p 16-p 17-w #0.7554438860971524#1804
+20-w ==> 0-p 7-c 16-p 17-w 4-f #0.7520938023450586#1796
+20-w ==> 0-p 6-f 16-p #0.7512562814070352#1794
+13-k ==> 0-p 6-f 7-c 16-p 17-w 18-o 4-f 12-k #0.75#1728
+20-w ==> 0-p 6-f 16-p 4-f #0.7479061976549414#1786
+20-w ==> 0-p 6-f 16-p 17-w #0.7479061976549414#1786
+
+----
+rules with 0-p in the righ-hand part.
+$ cat IGBAS.decoded.txt |sort -t "#" -rnk 2|grep -v "__"|egrep -e"==>.* 0-p"|wc -l
+     120
+$ cat IGBAS.decoded.txt |sort -t "#" -rnk 2|grep -v "__"|egrep -e"==>.* 0-p"|head -20
+12-k ==> 0-p 7-c 16-p 17-w 4-f #0.93929173693086#2228
+13-k ==> 0-p 6-f 7-c 16-p 17-w 18-o 4-f #0.9375#2160
+12-k ==> 0-p 6-f 7-c 16-p 17-w 4-f #0.9317032040472175#2210
+12-k ==> 0-p 6-f 7-c 16-p 17-w 18-o 4-f #0.924114671163575#2192
+8-n ==> 0-p 6-f 16-p 18-o #0.8853503184713376#2224
+8-n ==> 0-p 6-f 16-p 17-w 18-o #0.8821656050955414#2216
+5-f ==> 0-p 6-f 7-c 16-p 17-w 18-o 4-f #0.8666666666666667#1872
+8-n ==> 0-p 6-f 7-c 16-p 17-w 18-o #0.8407643312101911#2112
+8-n ==> 0-p 6-f 16-p 17-w 18-o 21-v #0.7898089171974523#1984
+8-n ==> 0-p 6-f 16-p 18-o 4-f #0.7802547770700637#1960
+8-n ==> 0-p 6-f 16-p 17-w 18-o 4-f #0.7770700636942676#1952
+8-n ==> 0-p 6-f 7-c 16-p 17-w 18-o 21-v #0.7707006369426752#1936
+20-w ==> 0-p 16-p #0.7587939698492462#1812
+20-w ==> 0-p 16-p 4-f #0.7554438860971524#1804
+20-w ==> 0-p 16-p 17-w #0.7554438860971524#1804
+20-w ==> 0-p 7-c 16-p 17-w 4-f #0.7520938023450586#1796
+20-w ==> 0-p 6-f 16-p #0.7512562814070352#1794
+13-k ==> 0-p 6-f 7-c 16-p 17-w 18-o 4-f 12-k #0.75#1728
+20-w ==> 0-p 6-f 16-p 4-f #0.7479061976549414#1786
+20-w ==> 0-p 6-f 16-p 17-w #0.7479061976549414#1786
+
+Is the confidence reliable ? Could it be lower that the given value ?
+
+----
+What about edible mushrooms ?
+$ cat IGBAS.decoded.txt |sort -t "#" -rnk 2|grep -v "__"|egrep -e"==>.* 0-e"|wc -l
+     456
+$ cat IGBAS.decoded.txt |sort -t "#" -rnk 2|grep -v "__"|egrep -e"==>.* 0-e"|head -20
+20-n ==> 16-p 18-o 0-e #0.8861788617886179#1744
+20-k ==> 6-f 16-p 17-w 18-o 0-e #0.8803418803418803#1648
+20-n ==> 6-f 16-p 17-w 18-o 0-e #0.8617886178861789#1696
+20-n ==> 16-p 18-o 0-e 8-b #0.8373983739837398#1648
+4-t ==> 6-f 7-c 12-s 16-p 17-w 18-o 19-p 0-e 8-b #0.7203791469194313#2432
+4-t ==> 6-f 12-s 13-s 16-p 17-w 19-p 0-e #0.7014218009478673#2368
+4-t ==> 6-f 12-s 13-s 16-p 17-w 18-o 19-p 0-e #0.6919431279620853#2336
+5-n ==> 13-s 16-p 18-o 0-e #0.6870748299319728#2424
+5-n ==> 12-s 13-s 16-p 0-e 8-b #0.6825396825396826#2408
+4-t ==> 6-f 7-c 12-s 13-s 16-p 17-w 19-p 0-e 8-b #0.6729857819905213#2272
+5-n ==> 16-p 19-p 0-e #0.6666666666666666#2352
+4-t ==> 6-f 7-c 12-s 13-s 16-p 17-w 18-o 19-p 0-e 8-b #0.6635071090047393#2240
+5-n ==> 6-f 12-s 13-s 16-p 17-w 0-e #0.6587301587301587#2324
+5-n ==> 7-c 16-p 0-e #0.6530612244897959#2304
+5-n ==> 13-s 16-p 18-o 0-e 8-b #0.6530612244897959#2304
+5-n ==> 12-s 16-p 18-o 0-e 8-b #0.6530612244897959#2304
+5-n ==> 7-c 12-s 16-p 0-e #0.6485260770975056#2288
+5-n ==> 6-f 12-s 16-p 17-w 18-o 0-e #0.6462585034013606#2280
+5-n ==> 16-p 19-p 0-e 8-b #0.6394557823129252#2256
+5-n ==> 7-c 12-s 13-s 16-p 0-e #0.6349206349206349#2240
