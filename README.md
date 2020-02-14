@@ -24,17 +24,33 @@ python Encoder4SPMF.py GrandEst.csv
 and the output of the encoder program is ```GrandEst_encoded_for_SPMF.txt```.
 
 ### Mining with SPMF
+Itemsets mining:
 At the same directory, have your ```spmf.jar``` ready inside and in the terminal,
 ```bash
-SPMF_commandline.sh
+P-SPMF_ITEMSET_command.sh
 ```
 it'll output the results along with the corresponding *min_sup* value. 
 For example, an output of the *min_sup=0.6* would be ```output_60.txt```. 
 
-### Decoding the SPMF format
-The snippet below will give the decoded file back, so in terminal:
+Association rules mining:
 ```bash
-python DecodeAfterSPMF.py output_60.txt
+P-SPMF_AR_command.sh
 ```
-### Association rules mining
+it'll output the results along with the corresponding *min_sup* value and *min_conf* value. 
+For example, an output of the *min_sup=0.6* and *min_sup=0.6* would be ```output_sup60_conf60.txt```.
+
+### Decoding the SPMF format
+Itemsets:
+The snippet below will give the decoded files back of itemsets mined by SPMF, so in terminal:
+```bash
+P-ITEMSET_decode_command.sh
+```
+
+Association rules:
+The snippet below will give the decoded files back of association rules mined by SPMF, so in terminal:
+```bash
+P-AR_decode_command.sh
+```
+
+The filename of decoded files outputted from the shell script starts with *decoded_*.
 
